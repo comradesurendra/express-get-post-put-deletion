@@ -25,15 +25,8 @@ app.get('/api/courses/:id', (req, res) => {
 })
 
 app.post('/api/courses', (req, res) => {
-  const schema = {
-    name: Joi.string().min(3).required()
-  }
-  const result = Joi.validate(req.body, schema)
-
-  if (result.error) {
-    res.status(400).send(result.error)
-    return
-  }
+  const result = validate(req.body)
+  if (result.error) res.status(400).send(result.error.details[0].message)
 
   const object = {
     id: courses.length + 1,
@@ -42,6 +35,26 @@ app.post('/api/courses', (req, res) => {
   courses.push(object)
   res.send(object)
 })
+
+app.put('/api/courses/:id', (req, res) => {
+  // check
+  const course = courses.find(c => c.id === parseInt(req.params.id))
+  if (!course) res.status(404).send('Course not found.')
+  // validate
+
+  const result = validate(req.body)
+  if (result.error) res.status(400).send(result.error.details[0].message)
+  // update
+
+  // return
+})
+
+function validate (course) {
+  const schema = {
+    name: Joi.string().min(3).required()
+  }
+  return Joi.validate(course, schema)
+}
 
 const port = process.env.PORT || 8000
 app.listen(8000, () => {
