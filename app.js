@@ -11,7 +11,7 @@ const courses = [
 ]
 
 app.get('/', (req, res) => {
-  res.send('Hello')
+  res.send('Home Page')
 })
 
 app.get('/api/courses', (req, res) => {
@@ -45,8 +45,9 @@ app.put('/api/courses/:id', (req, res) => {
   const result = validate(req.body)
   if (result.error) res.status(400).send(result.error.details[0].message)
   // update
-
+  course.name = req.body.name
   // return
+  res.send(course)
 })
 
 function validate (course) {
